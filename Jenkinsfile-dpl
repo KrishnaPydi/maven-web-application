@@ -1,0 +1,81 @@
+pipeline {
+    agent any
+
+    tools {
+        maven "maven-3.9.15"
+    }
+
+    stages {
+
+        stage('BUILD STARTED') {
+            steps {
+                slackSend(
+                    channel: 'airtel-dev',
+                    color: '#FFFF00',
+                    message: "🚀 BUILD STARTED\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}\nURL: ${env.BUILD_URL}"
+                )
+            }
+        }
+
+        stage('GIT CHECKOUT') {
+            steps {
+                git branch: 'development',
+                    credentialsId: '9de63073-05c4-4f89-ab88-a3a681b846ef',
+                    url: 'https://github.com/KrishnaPydi/maven-web-application.git'
+            }
+        }
+
+        stage('BUILD') {
+            steps {
+                sh "mvn clean package"
+            }
+        }
+
+        stage('SQ REPORT') {
+            steps {
+                sh "mvn clean sonar:sonar"
+            }
+        }
+
+        stage('NEXUS') {
+            steps {
+                sh "mvn clean deploy"
+            }
+        }
+
+        stage('TOMCAT') {
+            steps {
+                deploy adapters: [
+                    tomcat9(
+                        alternativeDeploymentContext: '',
+                        credentialsId: 'bf6a717d-ba77-47dc-938c-0c54bdd00661',
+                        path: '',
+                        url: 'http://98.94.53.27:8080/'
+                    )
+                ],
+                contextPath: null,
+                war: '**/maven-web-application.war'
+            }
+        }
+    }
+
+    post {
+
+        success {
+            slackSend(
+                channel: 'airtel-dev',
+                color: 'good',
+                message: "✅ BUILD SUCCESS\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}\nURL: ${env.BUILD_URL}"
+            )
+        }
+
+        failure {
+            slackSend(
+                channel: 'airtel-dev',
+                color: 'danger',
+                message: "❌ BUILD FAILED\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}\nURL: ${env.BUILD_URL}"
+            )
+        }
+
+    }
+}
