@@ -9,7 +9,7 @@
 </head>
 </head>
 <body>
-<h1 align="center">Welcome to PYDI DevOps With AWS</h1>
+<h1 align="center">Welcome to PYDI DevOps With AWS and DevSecOps with AI </h1>
 <h1 align="center"> PYDI DEVOPS </h1>
 <hr>
 <br>
