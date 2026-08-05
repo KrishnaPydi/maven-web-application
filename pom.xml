@@ -27,9 +27,9 @@
 
 		<junit.version>4.13.2</junit.version>
 
-		<sonar.host.url>http://15.207.54.73:8639</sonar.host.url>
+		<sonar.host.url>http://44.211.192.192:9000</sonar.host.url>
 		<sonar.login>admin</sonar.login>
-		<sonar.password>password</sonar.password>
+		<sonar.password>Rama@0261</sonar.password>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
