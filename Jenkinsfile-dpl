@@ -19,7 +19,7 @@ pipeline {
 
         stage('GIT CHECKOUT') {
             steps {
-                git branch: 'development',
+                git branch: 'prod',
                     credentialsId: '9de63073-05c4-4f89-ab88-a3a681b846ef',
                     url: 'https://github.com/KrishnaPydi/maven-web-application.git'
             }
