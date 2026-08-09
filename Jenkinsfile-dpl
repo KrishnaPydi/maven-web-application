@@ -1,0 +1,104 @@
+pipeline {
+
+    agent any
+
+    tools {
+        maven "maven-3.9.15"
+    }
+
+    stages {
+
+        stage('Slack - Build Started') {
+            steps {
+                slackSend(
+                    channel: '#airtel-dev',
+                    color: 'warning',
+                    message: """🚀 Airtel Dev Build STARTED
+
+Job: ${env.JOB_NAME}
+Build Number: #${env.BUILD_NUMBER}
+Branch: development
+Status: STARTED
+
+Jenkins URL: ${env.BUILD_URL}"""
+                )
+            }
+        }
+
+        stage('GIT CHECKOUT') {
+            steps {
+                git branch: 'development',
+                    credentialsId: 'cd3b89ec-bd5e-4647-8ed9-4a50efa2dd36',
+                    url: 'https://github.com/KrishnaPydi/maven-web-application.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh "mvn clean package"
+            }
+        }
+
+        stage('Sonarqube') {
+            steps {
+                sh "mvn clean sonar:sonar"
+            }
+        }
+
+        stage('Nexus') {
+            steps {
+                sh "mvn clean deploy"
+            }
+        }
+
+        stage('Tomcat') {
+            steps {
+                deploy adapters: [
+                    tomcat9(
+                        alternativeDeploymentContext: '',
+                        credentialsId: '0a867734-f3cf-4073-8e90-744b2a2d8a97',
+                        path: '',
+                        url: 'http://32.197.252.89:8080/'
+                    )
+                ],
+                contextPath: null,
+                war: '**/maven-web-application.war'
+            }
+        }
+    }
+
+    post {
+
+        success {
+            slackSend(
+                channel: '#airtel-dev',
+                color: 'good',
+                message: """✅ Airtel Dev Build SUCCESS
+
+Job: ${env.JOB_NAME}
+Build Number: #${env.BUILD_NUMBER}
+Branch: development
+Status: SUCCESS
+
+Jenkins URL: ${env.BUILD_URL}"""
+            )
+        }
+
+        failure {
+            slackSend(
+                channel: '#airtel-dev',
+                color: 'danger',
+                message: """❌ Airtel Dev Build FAILED
+
+Job: ${env.JOB_NAME}
+Build Number: #${env.BUILD_NUMBER}
+Branch: development
+Status: FAILURE
+
+Please check Jenkins Console Output.
+
+Jenkins URL: ${env.BUILD_URL}"""
+            )
+        }
+    }
+}
