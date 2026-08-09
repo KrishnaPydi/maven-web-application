@@ -27,7 +27,7 @@ Jenkins URL: ${env.BUILD_URL}"""
 
         stage('GIT CHECKOUT') {
             steps {
-                git branch: 'development',
+                git branch: 'prod',
                     credentialsId: 'cd3b89ec-bd5e-4647-8ed9-4a50efa2dd36',
                     url: 'https://github.com/KrishnaPydi/maven-web-application.git'
             }
