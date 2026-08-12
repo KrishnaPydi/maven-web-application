@@ -27,7 +27,7 @@
 
 		<junit.version>4.13.2</junit.version>
 
-		<sonar.host.url>http://100.62.117.27:9000</sonar.host.url>
+		<sonar.host.url>http://34.228.69.15:9000</sonar.host.url>
 		<sonar.login>admin</sonar.login>
 		<sonar.password>Rama@0261</sonar.password>
 
